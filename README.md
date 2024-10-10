@@ -13,7 +13,7 @@ Image to WebP Converter is a user-friendly desktop application that allows you t
 
 ## Installation
 
-1. Download the executable file from the [Releases](https://github.com/SiliconSquire/webp.converter) section of this repository.
+1. Download the executable file from the [Releases](https://github.com/SiliconSquire/Image-to-Webp-Converter) section of this repository.
 
 2. Extract the downloaded archive to a directory of your choice.
 
