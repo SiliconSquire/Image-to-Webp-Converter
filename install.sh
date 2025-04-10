@@ -6,7 +6,7 @@ set -o pipefail
 
 APP_NAME="ImageConverter"
 SCRIPT_NAME="image_converter_gui.py"
-PREFERRED_ICON_NAME="icon.png" # Prefer PNG
+PREFERRED_ICON_NAME="icon.png"
 FALLBACK_ICON_NAME="icon.ico"
 INSTALL_BASE_DIR="${HOME}/.local/share"
 INSTALL_DIR="${INSTALL_BASE_DIR}/${APP_NAME}"
@@ -17,7 +17,6 @@ LAUNCHER_SCRIPT_PATH="${BIN_DIR}/${LAUNCHER_SCRIPT_NAME}"
 DESKTOP_ENTRY_DIR="${HOME}/.local/share/applications"
 DESKTOP_ENTRY_NAME="${APP_NAME}.desktop"
 DESKTOP_ENTRY_PATH="${DESKTOP_ENTRY_DIR}/${DESKTOP_ENTRY_NAME}"
-# Icon location for system themes (optional, but good practice)
 ICON_INSTALL_DIR="${HOME}/.local/share/icons/hicolor/scalable/apps"
 
 
@@ -38,14 +37,12 @@ uninstall() {
         rm -f "${DESKTOP_ENTRY_PATH}"
     fi
 
-    # Also remove the potentially installed themed icon
     local THEMED_ICON_PATH="${ICON_INSTALL_DIR}/${APP_NAME}.png"
     if [ -f "${THEMED_ICON_PATH}" ]; then
          msg "Removing themed icon: ${THEMED_ICON_PATH}"
          rm -f "${THEMED_ICON_PATH}"
     fi
 
-    # Try updating caches after removal
     if command -v update-desktop-database &> /dev/null; then
         msg "Updating desktop database..."
         update-desktop-database "${DESKTOP_ENTRY_DIR}" &> /dev/null || msg "  (Optional) Failed to update desktop database."
@@ -90,11 +87,11 @@ install() {
     if [ -f "${SCRIPT_DIR}/${PREFERRED_ICON_NAME}" ]; then
         msg "  [+] Using preferred icon: ${PREFERRED_ICON_NAME}"
         SOURCE_ICON_PATH="${SCRIPT_DIR}/${PREFERRED_ICON_NAME}"
-        FINAL_ICON_NAME="${PREFERRED_ICON_NAME}" # Keep .png extension
+        FINAL_ICON_NAME="${PREFERRED_ICON_NAME}" 
     elif [ -f "${SCRIPT_DIR}/${FALLBACK_ICON_NAME}" ]; then
         msg "  [*] Using fallback icon: ${FALLBACK_ICON_NAME} (PNG format is recommended)"
         SOURCE_ICON_PATH="${SCRIPT_DIR}/${FALLBACK_ICON_NAME}"
-        FINAL_ICON_NAME="${FALLBACK_ICON_NAME}" # Keep .ico extension
+        FINAL_ICON_NAME="${FALLBACK_ICON_NAME}"
     else
         msg "  [!] Warning: No icon file found (icon.png or icon.ico). Installing without icon."
     fi
@@ -103,7 +100,7 @@ install() {
     mkdir -p "${INSTALL_DIR}"
     mkdir -p "${BIN_DIR}"
     mkdir -p "${DESKTOP_ENTRY_DIR}"
-    mkdir -p "${ICON_INSTALL_DIR}" # Create themed icon dir
+    mkdir -p "${ICON_INSTALL_DIR}"
     msg "  [+] Directories created."
 
     msg "Creating Python virtual environment..."
@@ -117,10 +114,9 @@ install() {
 
     msg "Copying application files..."
     cp "${SCRIPT_DIR}/${SCRIPT_NAME}" "${INSTALL_DIR}/" || err "Failed to copy script."
-    # Copy the chosen icon (if one was found) to the main app dir
     if [ -n "${SOURCE_ICON_PATH}" ]; then
         cp "${SOURCE_ICON_PATH}" "${INSTALL_DIR}/${FINAL_ICON_NAME}" || err "Failed to copy icon to app dir."
-        # Also copy the preferred PNG icon to the themed location if it exists
+
         if [ "${FINAL_ICON_NAME}" == "${PREFERRED_ICON_NAME}" ]; then
              cp "${SOURCE_ICON_PATH}" "${ICON_INSTALL_DIR}/${APP_NAME}.png" || err "Failed to copy icon to theme dir."
              msg "  [*] Copied icon to theme dir: ${ICON_INSTALL_DIR}/${APP_NAME}.png"
@@ -139,19 +135,17 @@ EOF
 
     msg "Creating desktop entry..."
 
-    # Icon name for the desktop entry (prefer just name if themed exists)
-    local DESKTOP_ENTRY_ICON_VALUE="${APP_NAME}" # Use simple name if themed icon was copied
-     # If only .ico exists or no icon, use absolute path
+    local DESKTOP_ENTRY_ICON_VALUE="${APP_NAME}" 
+
     if [ "${FINAL_ICON_NAME}" != "${PREFERRED_ICON_NAME}" ] || [ -z "${FINAL_ICON_NAME}" ]; then
-         DESKTOP_ENTRY_ICON_VALUE="${INSTALL_DIR}/${FINAL_ICON_NAME}" # Fallback to absolute path
-         if [ -z "${FINAL_ICON_NAME}" ]; then DESKTOP_ENTRY_ICON_VALUE=""; fi # Empty if no icon at all
+         DESKTOP_ENTRY_ICON_VALUE="${INSTALL_DIR}/${FINAL_ICON_NAME}" 
+         if [ -z "${FINAL_ICON_NAME}" ]; then DESKTOP_ENTRY_ICON_VALUE=""; fi 
          msg "  [*] Using absolute icon path in desktop entry: ${DESKTOP_ENTRY_ICON_VALUE}"
     else
          msg "  [*] Using themed icon name in desktop entry: ${DESKTOP_ENTRY_ICON_VALUE}"
     fi
 
 
-    # Use direct python execution in desktop file
     local EXEC_COMMAND="env QT_QPA_PLATFORM=xcb ${VENV_DIR}/bin/python ${INSTALL_DIR}/${SCRIPT_NAME}"
 
     tee "${DESKTOP_ENTRY_PATH}" > /dev/null << EOF
@@ -169,7 +163,7 @@ EOF
     chmod 644 "${DESKTOP_ENTRY_PATH}" || msg "  [!] Warning: Could not set permissions on desktop entry."
     msg "  [+] Desktop entry created."
 
-    # --- Force Update Caches ---
+
     msg "Updating caches (may take a moment)..."
     if command -v update-desktop-database &> /dev/null; then
         update-desktop-database "${DESKTOP_ENTRY_DIR}" &> /dev/null || msg "  (Optional) Failed to update desktop database."
@@ -177,7 +171,6 @@ EOF
         msg "  [*] 'update-desktop-database' not found. Skipping."
     fi
     if command -v gtk-update-icon-cache &> /dev/null; then
-        # Ensure the target directory exists before updating cache for it
         mkdir -p "${HOME}/.local/share/icons/hicolor"
         gtk-update-icon-cache -f -t "${HOME}/.local/share/icons/hicolor" &> /dev/null || msg "  (Optional) Failed to update icon cache."
     else
