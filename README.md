@@ -34,15 +34,15 @@ A shell script (`install.sh`) is provided to help with the installation on Linux
 1.  Save the `install.sh` script and the `image_converter_gui.py` script (and optionally an `icon.png` or `icon.ico` file) in the same directory.
 2.  Open a terminal and navigate to that directory.
 3.  Run the installation script:
-    \`\`\`bash
+    ```bash
     chmod +x install.sh
     ./install.sh
-    \`\`\`
+    ```
 4.  Follow the on-screen instructions. You may need to log out and log back in for the application menu entry to appear.
 5.  To uninstall, run the script again with the `--uninstall` flag:
-    \`\`\`bash
+    ```bash
     ./install.sh --uninstall
-    \`\`\`
+    ```
 
 ### Windows
 
@@ -51,14 +51,14 @@ For Windows, we recommend building a standalone executable using PyInstaller. Th
 **Building a Windows Executable (Guide for Developers):**
 
 1.  **Install Dependencies:** If you haven't already, install PyQt6, Pillow, and PyInstaller:
-    \`\`\`bash
+    ```bash
     pip install PyQt6 Pillow pyinstaller
-    \`\`\`
+    ```
 2.  **Navigate to the Script Directory:** Open a command prompt or PowerShell and navigate to the directory containing your `image_converter_gui.py` script and any icon files (e.g., `icon.ico`).
 3.  **Run PyInstaller:** Use the following command to create the executable. Adjust the `--icon` option if you have an icon file:
-    \`\`\`bash
+    ```bash
     pyinstaller --onefile --windowed --icon=icon.ico image_converter_gui.py
-    \`\`\`
+    ```
     *   `--onefile`: Creates a single executable file.
     *   `--windowed` or `-w`: Prevents a console window from appearing.
     *   `--icon=icon.ico`: Specifies the path to your application icon file. Replace `icon.ico` with the actual filename if different.
