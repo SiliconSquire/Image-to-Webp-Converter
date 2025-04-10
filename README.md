@@ -2,6 +2,8 @@
 
 # Image to WebP Converter
 
+![](Screenshot_20250410_154153.png)
+
 Image to WebP Converter is a user-friendly desktop application that allows you to easily convert PNG, JPG, JPEG, BMP, GIF, and TIFF images to the WebP format. With its intuitive interface and customizable options, you can quickly optimize your images for web usage while maintaining control over the output quality and size.
 
 ## Features
